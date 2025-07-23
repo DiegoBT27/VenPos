@@ -39,6 +39,16 @@ export function SignupForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
+    if (!auth || !db) {
+       toast({
+        variant: 'destructive',
+        title: 'Error de configuración',
+        description: 'La configuración de Firebase no está disponible. Contacta al administrador.',
+      });
+      setLoading(false);
+      return;
+    }
+
     try {
       // Verificar si ya existen usuarios
       const usersCollection = collection(db, 'usuarios');

@@ -28,11 +28,8 @@ interface DashboardHeaderProps {
 export default function DashboardHeader({ firestoreUser, setSidebarOpen }: DashboardHeaderProps) {
   const router = useRouter();
   const { config, loading: configLoading } = useConfig();
+  const { handleLogout } = useAuth();
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    router.push('/login');
-  };
 
   const currentRole = firestoreUser?.rol || 'cajero';
 

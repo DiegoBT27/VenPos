@@ -25,6 +25,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    };
     // onAuthStateChanged devuelve una función de cancelación (unsubscribe)
     const unsubscribeAuth = onAuthStateChanged(auth, (authUser) => {
       setUser(authUser);
@@ -42,7 +46,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // Este efecto depende de `user`. Si `user` cambia...
-    if (user) {
+    if (user && db) {
       // Si hay un usuario, empezamos (o continuamos) cargando mientras buscamos sus datos.
       setLoading(true);
       const unsubscribeFirestore = onSnapshot(doc(db, "usuarios", user.uid), (doc) => {
@@ -52,7 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           // El usuario existe en Auth pero no en Firestore. Mal estado.
           setFirestoreUser(null);
           // Deslogueamos para evitar problemas.
-          signOut(auth);
+          if(auth) signOut(auth);
         }
         // Terminamos de cargar SOLO DESPUÉS de obtener la respuesta de Firestore.
         setLoading(false);
@@ -61,7 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setFirestoreUser(null);
         setLoading(false);
         // También podría ser bueno desloguear aquí.
-        signOut(auth);
+        if(auth) signOut(auth);
       });
 
       return () => unsubscribeFirestore();
@@ -72,7 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const handleLogout = useCallback(async () => {
     try {
-      await signOut(auth);
+      if(auth) await signOut(auth);
       // `onAuthStateChanged` se activará, poniendo `user` a null,
       // lo que a su vez pondrá `firestoreUser` a null.
       // La redirección ocurrirá de forma segura desde el AppLayout.

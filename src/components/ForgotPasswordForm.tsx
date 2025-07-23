@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -32,6 +33,15 @@ export function ForgotPasswordForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
+    if (!auth) {
+       toast({
+        variant: 'destructive',
+        title: 'Error de configuración',
+        description: 'La configuración de Firebase no está disponible. Contacta al administrador.',
+      });
+      setLoading(false);
+      return;
+    }
     try {
       await sendPasswordResetEmail(auth, values.email);
       toast({
