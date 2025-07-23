@@ -1,0 +1,17 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // =================================================================
+    // REGLAS ABIERTAS PARA DESARROLLO
+    // ¡ADVERTENCIA! Estas reglas permiten que CUALQUIERA lea, escriba
+    // y elimine datos en tu base de datos. Son útiles para la fase
+    // de prototipado rápido, pero DEBEN ser reemplazadas por reglas
+    // seguras antes de que la aplicación sea usada por usuarios reales.
+    // =================================================================
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
