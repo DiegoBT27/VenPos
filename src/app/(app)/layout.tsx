@@ -8,14 +8,6 @@ import { useState, useEffect } from "react";
 import DashboardHeader from "@/components/DashboardHeader";
 import Sidebar from "@/components/Sidebar";
 import { Loader2 } from "lucide-react";
-import type { UserRole } from "@/types/user";
-
-// Define qué roles tienen acceso a qué rutas base.
-const allowedRoutes: Record<UserRole, string[]> = {
-  admin: ['admin', 'nueva-venta', 'mi-perfil'],
-  cajero: ['cajero', 'nueva-venta', 'mi-perfil'],
-  supervisor: ['supervisor', 'mi-perfil', 'admin'], // Supervisor puede acceder a /admin/cajas
-};
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const { user, firestoreUser, loading, handleLogout } = useAuth();
@@ -29,7 +21,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     }
   }, [loading, user]);
 
-  if (loading) {
+  if (loading || !firestoreUser) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -39,25 +31,13 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
   // Si después de cargar no hay usuario o datos de Firestore, no renderiza nada.
   // El useEffect de arriba se encargará de la redirección.
-  if (!user || !firestoreUser) {
+  if (!user) {
     return null; 
   }
 
   if (!firestoreUser.activo) {
     handleLogout(); // Usamos handleLogout para asegurar la limpieza del estado
     redirect('/login?error=inactive');
-    return null;
-  }
-
-  const userRole = firestoreUser.rol;
-  // Obtenemos el segmento principal de la ruta (admin, cajero, supervisor)
-  const basePath = pathname.split('/')[1]; 
-  
-  // Lógica de autorización
-  const isAllowed = allowedRoutes[userRole]?.includes(basePath);
-
-  if (!isAllowed) {
-    redirect(`/${userRole}`); // Redirige a la página principal de su rol
     return null;
   }
 
@@ -73,4 +53,3 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     </div>
   );
 }
-

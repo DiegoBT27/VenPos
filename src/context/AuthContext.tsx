@@ -25,10 +25,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
+    // Si la config de Firebase no está, no hacemos nada.
     if (!auth) {
       setLoading(false);
       return;
     };
+
     // onAuthStateChanged devuelve una función de cancelación (unsubscribe)
     const unsubscribeAuth = onAuthStateChanged(auth, (authUser) => {
       setUser(authUser);
@@ -46,6 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // Este efecto depende de `user`. Si `user` cambia...
+    // Y si db existe
     if (user && db) {
       // Si hay un usuario, empezamos (o continuamos) cargando mientras buscamos sus datos.
       setLoading(true);

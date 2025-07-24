@@ -1,4 +1,3 @@
-
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/app";
 import { getAuth } from "firebase/auth";
@@ -16,19 +15,14 @@ const firebaseConfig: FirebaseOptions = {
 };
 
 // Initialize Firebase
-const app = !getApps().length && firebaseConfig.apiKey 
-  ? initializeApp(firebaseConfig) 
-  : getApps().length > 0 
-    ? getApp() 
+const app = !getApps().length && firebaseConfig.apiKey
+  ? initializeApp(firebaseConfig)
+  : getApps().length > 0
+    ? getApp()
     : null;
 
 const auth = app ? getAuth(app) : null;
 const db = app ? getFirestore(app) : null;
-
-// Throw an error only in the browser if config is still missing
-if (typeof window !== 'undefined' && !app) {
-  throw new Error("Missing Firebase configuration. Please check your environment variables.");
-}
 
 // We need to export auth and db as potentially null and handle it in the app
 // but for simplicity in the rest of the app, we will export them and assume they are initialized.
