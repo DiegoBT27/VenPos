@@ -15,16 +15,9 @@ const firebaseConfig: FirebaseOptions = {
 };
 
 // Initialize Firebase
-const app = !getApps().length && firebaseConfig.apiKey
-  ? initializeApp(firebaseConfig)
-  : getApps().length > 0
-    ? getApp()
-    : null;
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-const auth = app ? getAuth(app) : null;
-const db = app ? getFirestore(app) : null;
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-// We need to export auth and db as potentially null and handle it in the app
-// but for simplicity in the rest of the app, we will export them and assume they are initialized.
-// The check above will prevent the app from running if they are not.
 export { app, auth, db };
